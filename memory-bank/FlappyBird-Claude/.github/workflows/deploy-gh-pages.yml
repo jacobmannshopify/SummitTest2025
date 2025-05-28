@@ -28,12 +28,12 @@ jobs:
           
       - name: Install dependencies
         run: |
-          cd memory-bank/FlappyBird-Claude/flappy-bird-game
+          cd flappy-bird-game
           npm ci
           
       - name: Build
         run: |
-          cd memory-bank/FlappyBird-Claude/flappy-bird-game
+          cd flappy-bird-game
           npm run build
           touch out/.nojekyll
           
@@ -43,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./memory-bank/FlappyBird-Claude/flappy-bird-game/out
+          path: ./flappy-bird-game/out
           
   deploy:
     environment:
