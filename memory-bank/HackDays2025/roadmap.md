@@ -1,4 +1,4 @@
-# Flappy Bird Recreation Roadmap - NextJS Edition
+# Flappy Bird Recreation Roadmap - NextJS Edition (Claude Version)
 
 ## Overview
 This roadmap provides a comprehensive, step-by-step guide to recreating the classic Flappy Bird game using modern web technologies. Each step is designed to build upon the previous one, ensuring a smooth development process from setup to deployment.
