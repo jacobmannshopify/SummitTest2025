@@ -50,7 +50,11 @@ export function drawBird({ bird, ctx }: BirdProps) {
 
 export function updateBird(bird: BirdType, canvasHeight: number): BirdType {
   // Apply gravity
-  const newVelocityY = bird.velocity.y + GAME_CONFIG.GRAVITY;
+  let newVelocityY = bird.velocity.y + GAME_CONFIG.GRAVITY;
+  
+  // Cap maximum fall velocity
+  const MAX_FALL_VELOCITY = 12;
+  newVelocityY = Math.min(newVelocityY, MAX_FALL_VELOCITY);
   
   // Update position
   const newY = bird.position.y + newVelocityY;

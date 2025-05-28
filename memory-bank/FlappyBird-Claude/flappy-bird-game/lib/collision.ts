@@ -1,11 +1,13 @@
 import { Bird, Pipe, GAME_CONFIG } from '@/types/game';
 
+const COLLISION_BUFFER = 4; // pixels of forgiveness
+
 export function checkCollision(bird: Bird, pipe: Pipe): boolean {
-  // Get bird bounds
-  const birdLeft = bird.position.x;
-  const birdRight = bird.position.x + bird.width;
-  const birdTop = bird.position.y;
-  const birdBottom = bird.position.y + bird.height;
+  // Get bird bounds with buffer
+  const birdLeft = bird.position.x + COLLISION_BUFFER;
+  const birdRight = bird.position.x + bird.width - COLLISION_BUFFER;
+  const birdTop = bird.position.y + COLLISION_BUFFER;
+  const birdBottom = bird.position.y + bird.height - COLLISION_BUFFER;
 
   // Get pipe bounds
   const pipeLeft = pipe.position.x;

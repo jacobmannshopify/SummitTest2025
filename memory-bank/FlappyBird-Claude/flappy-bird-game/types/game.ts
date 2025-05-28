@@ -28,17 +28,19 @@ export interface GameState {
   bird: Bird;
   pipes: Pipe[];
   score: number;
+  highScore: number;
   gameOver: boolean;
   started: boolean;
+  gamePhase: 'MENU' | 'PLAYING' | 'GAME_OVER';
 }
 
 export const GAME_CONFIG = {
-  GRAVITY: 0.4,
-  JUMP_STRENGTH: -7,
-  PIPE_WIDTH: 52,
-  PIPE_GAP: 140,
-  PIPE_SPEED: 2,
-  BIRD_SIZE: 34,
-  GROUND_HEIGHT: 112,
-  PIPE_SPAWN_INTERVAL: 1800, // milliseconds
+  GRAVITY: 0.3,
+  JUMP_STRENGTH: -4.5,
+  PIPE_WIDTH: 80,
+  PIPE_GAP: 180,
+  PIPE_SPEED: 2.5,
+  BIRD_SIZE: 40,
+  GROUND_HEIGHT: 120,
+  PIPE_SPAWN_INTERVAL: 2000, // milliseconds
 }; 
