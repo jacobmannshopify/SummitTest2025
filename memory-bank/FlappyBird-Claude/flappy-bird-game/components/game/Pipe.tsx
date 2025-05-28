@@ -8,51 +8,116 @@ interface PipeProps {
 
 export function drawPipe({ pipe, ctx, canvasHeight }: PipeProps) {
   const pipeColor = '#73BF2E';
-  const pipeHighlight = '#89D33C';
-  const pipeShadow = '#547A22';
+  const pipeColorDark = '#5A9623';
+  const pipeColorLight = '#8FD146';
+  const capHeight = 40;
+  const capOverhang = 10;
   
-  // Draw top pipe
+  // Top pipe
   const topPipeHeight = pipe.gapY;
   
-  // Main pipe body (top)
-  ctx.fillStyle = pipeColor;
-  ctx.fillRect(pipe.position.x, 0, pipe.width, topPipeHeight);
+  // Draw top pipe body with gradient
+  const topGradient = ctx.createLinearGradient(pipe.position.x, 0, pipe.position.x + pipe.width, 0);
+  topGradient.addColorStop(0, pipeColorLight);
+  topGradient.addColorStop(0.1, pipeColor);
+  topGradient.addColorStop(0.9, pipeColorDark);
+  topGradient.addColorStop(1, '#4A7A1C');
   
-  // Pipe cap (top)
-  ctx.fillStyle = pipeColor;
-  ctx.fillRect(pipe.position.x - 4, topPipeHeight - 30, pipe.width + 8, 30);
+  ctx.fillStyle = topGradient;
+  ctx.fillRect(pipe.position.x, 0, pipe.width, topPipeHeight - capHeight);
   
-  // Highlights (top)
-  ctx.fillStyle = pipeHighlight;
-  ctx.fillRect(pipe.position.x + 5, 0, 5, topPipeHeight - 30);
-  ctx.fillRect(pipe.position.x - 2, topPipeHeight - 28, pipe.width + 4, 5);
+  // Top pipe highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.fillRect(pipe.position.x + 5, 0, 10, topPipeHeight - capHeight);
   
-  // Shadows (top)
-  ctx.fillStyle = pipeShadow;
-  ctx.fillRect(pipe.position.x + pipe.width - 10, 0, 10, topPipeHeight - 30);
-  ctx.fillRect(pipe.position.x - 2, topPipeHeight - 5, pipe.width + 4, 5);
+  // Top pipe cap with 3D effect
+  const topCapGradient = ctx.createLinearGradient(
+    pipe.position.x - capOverhang, 
+    topPipeHeight - capHeight, 
+    pipe.position.x - capOverhang + pipe.width + capOverhang * 2, 
+    topPipeHeight - capHeight
+  );
+  topCapGradient.addColorStop(0, pipeColorLight);
+  topCapGradient.addColorStop(0.1, pipeColor);
+  topCapGradient.addColorStop(0.9, pipeColorDark);
+  topCapGradient.addColorStop(1, '#4A7A1C');
   
-  // Draw bottom pipe
+  ctx.fillStyle = topCapGradient;
+  ctx.fillRect(
+    pipe.position.x - capOverhang,
+    topPipeHeight - capHeight,
+    pipe.width + capOverhang * 2,
+    capHeight
+  );
+  
+  // Top cap highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.fillRect(pipe.position.x - capOverhang + 5, topPipeHeight - capHeight + 5, 15, capHeight - 10);
+  
+  // Top cap shadow
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(
+    pipe.position.x - capOverhang,
+    topPipeHeight - 5,
+    pipe.width + capOverhang * 2,
+    5
+  );
+  
+  // Bottom pipe
   const bottomPipeY = pipe.gapY + pipe.gapHeight;
   const bottomPipeHeight = canvasHeight - bottomPipeY - GAME_CONFIG.GROUND_HEIGHT;
   
-  // Main pipe body (bottom)
-  ctx.fillStyle = pipeColor;
-  ctx.fillRect(pipe.position.x, bottomPipeY, pipe.width, bottomPipeHeight);
+  // Draw bottom pipe cap first
+  const bottomCapGradient = ctx.createLinearGradient(
+    pipe.position.x - capOverhang,
+    bottomPipeY,
+    pipe.position.x - capOverhang + pipe.width + capOverhang * 2,
+    bottomPipeY
+  );
+  bottomCapGradient.addColorStop(0, pipeColorLight);
+  bottomCapGradient.addColorStop(0.1, pipeColor);
+  bottomCapGradient.addColorStop(0.9, pipeColorDark);
+  bottomCapGradient.addColorStop(1, '#4A7A1C');
   
-  // Pipe cap (bottom)
-  ctx.fillStyle = pipeColor;
-  ctx.fillRect(pipe.position.x - 4, bottomPipeY, pipe.width + 8, 30);
+  ctx.fillStyle = bottomCapGradient;
+  ctx.fillRect(
+    pipe.position.x - capOverhang,
+    bottomPipeY,
+    pipe.width + capOverhang * 2,
+    capHeight
+  );
   
-  // Highlights (bottom)
-  ctx.fillStyle = pipeHighlight;
-  ctx.fillRect(pipe.position.x + 5, bottomPipeY + 30, 5, bottomPipeHeight - 30);
-  ctx.fillRect(pipe.position.x - 2, bottomPipeY + 2, pipe.width + 4, 5);
+  // Bottom cap highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.fillRect(pipe.position.x - capOverhang + 5, bottomPipeY + 5, 15, capHeight - 10);
   
-  // Shadows (bottom)
-  ctx.fillStyle = pipeShadow;
-  ctx.fillRect(pipe.position.x + pipe.width - 10, bottomPipeY + 30, 10, bottomPipeHeight - 30);
-  ctx.fillRect(pipe.position.x - 2, bottomPipeY + 25, pipe.width + 4, 5);
+  // Bottom cap top shadow
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  ctx.fillRect(
+    pipe.position.x - capOverhang,
+    bottomPipeY,
+    pipe.width + capOverhang * 2,
+    5
+  );
+  
+  // Draw bottom pipe body
+  const bottomGradient = ctx.createLinearGradient(pipe.position.x, 0, pipe.position.x + pipe.width, 0);
+  bottomGradient.addColorStop(0, pipeColorLight);
+  bottomGradient.addColorStop(0.1, pipeColor);
+  bottomGradient.addColorStop(0.9, pipeColorDark);
+  bottomGradient.addColorStop(1, '#4A7A1C');
+  
+  ctx.fillStyle = bottomGradient;
+  ctx.fillRect(pipe.position.x, bottomPipeY + capHeight, pipe.width, bottomPipeHeight);
+  
+  // Bottom pipe highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.fillRect(pipe.position.x + 5, bottomPipeY + capHeight, 10, bottomPipeHeight);
+  
+  // Add subtle inner shadows for depth
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  ctx.fillRect(pipe.position.x + pipe.width - 5, 0, 5, topPipeHeight - capHeight);
+  ctx.fillRect(pipe.position.x + pipe.width - 5, bottomPipeY + capHeight, 5, bottomPipeHeight);
 }
 
 export function updatePipe(pipe: PipeType): PipeType {
