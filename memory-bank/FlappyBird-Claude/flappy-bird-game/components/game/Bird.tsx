@@ -11,23 +11,39 @@ export function drawBird({ bird, ctx }: BirdProps) {
   // Move to bird position
   ctx.translate(bird.position.x + bird.width / 2, bird.position.y + bird.height / 2);
   
-  // Calculate rotation based on velocity
-  const rotation = Math.min(Math.max(bird.velocity.y * 3, -30), 90) * (Math.PI / 180);
+  // Calculate rotation based on velocity (improved formula)
+  const rotation = Math.min(Math.max(bird.velocity.y * 2.5, -25), 90) * (Math.PI / 180);
   ctx.rotate(rotation);
   
-  // Draw bird (simple rectangle for now, will be replaced with sprite)
+  // Draw bird body with rounded corners
   ctx.fillStyle = '#FFD700'; // Gold color
-  ctx.fillRect(-bird.width / 2, -bird.height / 2, bird.width, bird.height);
+  ctx.beginPath();
+  ctx.roundRect(-bird.width / 2, -bird.height / 2, bird.width, bird.height, 4);
+  ctx.fill();
+  
+  // Draw wing
+  ctx.fillStyle = '#FFA500'; // Orange
+  ctx.fillRect(-bird.width / 4, -2, bird.width / 3, 12);
   
   // Draw eye
   ctx.fillStyle = 'white';
-  ctx.fillRect(bird.width / 4, -bird.height / 4, 8, 8);
+  ctx.beginPath();
+  ctx.arc(bird.width / 4, -bird.height / 4, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
   ctx.fillStyle = 'black';
-  ctx.fillRect(bird.width / 4 + 2, -bird.height / 4 + 2, 4, 4);
+  ctx.beginPath();
+  ctx.arc(bird.width / 4 + 1, -bird.height / 4, 2, 0, Math.PI * 2);
+  ctx.fill();
   
   // Draw beak
   ctx.fillStyle = '#FF6347';
-  ctx.fillRect(bird.width / 2 - 2, 0, 8, 4);
+  ctx.beginPath();
+  ctx.moveTo(bird.width / 2, 0);
+  ctx.lineTo(bird.width / 2 + 8, 2);
+  ctx.lineTo(bird.width / 2, 4);
+  ctx.closePath();
+  ctx.fill();
   
   ctx.restore();
 }

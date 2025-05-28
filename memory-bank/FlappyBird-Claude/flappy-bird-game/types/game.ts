@@ -33,12 +33,12 @@ export interface GameState {
 }
 
 export const GAME_CONFIG = {
-  GRAVITY: 0.5,
-  JUMP_STRENGTH: -8,
+  GRAVITY: 0.4,
+  JUMP_STRENGTH: -7,
   PIPE_WIDTH: 52,
-  PIPE_GAP: 120,
+  PIPE_GAP: 140,
   PIPE_SPEED: 2,
   BIRD_SIZE: 34,
   GROUND_HEIGHT: 112,
-  PIPE_SPAWN_INTERVAL: 1500, // milliseconds
+  PIPE_SPAWN_INTERVAL: 1800, // milliseconds
 }; 

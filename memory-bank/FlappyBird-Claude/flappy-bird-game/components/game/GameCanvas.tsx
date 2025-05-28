@@ -5,6 +5,7 @@ import { Bird, Pipe, GameState, GAME_CONFIG } from '@/types/game';
 import { drawBird, updateBird, jumpBird } from './Bird';
 import { drawPipe, updatePipe, createPipe } from './Pipe';
 import { drawBackground, drawGround } from './Background';
+import { checkCollision, checkGroundCollision, checkCeilingCollision } from '@/lib/collision';
 
 interface GameCanvasProps {
   width?: number;
@@ -25,38 +26,44 @@ export default function GameCanvas({
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
-  const lastPipeTimeRef = useRef<number>(0);
-  
-  const [gameState, setGameState] = useState<GameState>({
+  const gameStateRef = useRef<GameState>({
     bird: initialBird,
     pipes: [],
     score: 0,
     gameOver: false,
     started: false,
   });
+  const lastPipeTimeRef = useRef<number>(0);
+  const groundOffsetRef = useRef<number>(0);
   
-  const [groundOffset, setGroundOffset] = useState(0);
+  const [, forceUpdate] = useState({});
 
   const handleClick = useCallback(() => {
+    const gameState = gameStateRef.current;
+    
     if (!gameState.started) {
-      setGameState(prev => ({ ...prev, started: true }));
+      gameStateRef.current = { ...gameState, started: true };
+      lastPipeTimeRef.current = performance.now();
     } else if (!gameState.gameOver) {
-      setGameState(prev => ({
-        ...prev,
-        bird: jumpBird(prev.bird),
-      }));
+      gameStateRef.current = {
+        ...gameState,
+        bird: jumpBird(gameState.bird),
+      };
     } else {
       // Reset game
-      setGameState({
+      gameStateRef.current = {
         bird: initialBird,
         pipes: [],
         score: 0,
         gameOver: false,
         started: true,
-      });
-      lastPipeTimeRef.current = 0;
+      };
+      lastPipeTimeRef.current = performance.now();
+      groundOffsetRef.current = 0;
     }
-  }, [gameState.started, gameState.gameOver]);
+    
+    forceUpdate({});
+  }, []);
 
   const gameLoop = useCallback((timestamp: number) => {
     const canvas = canvasRef.current;
@@ -65,53 +72,65 @@ export default function GameCanvas({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const gameState = gameStateRef.current;
+
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
     // Draw background
-    drawBackground({ ctx, width, height, groundOffset });
+    drawBackground({ ctx, width, height, groundOffset: groundOffsetRef.current });
 
     if (gameState.started && !gameState.gameOver) {
       // Update ground offset for scrolling effect
-      setGroundOffset(prev => (prev + GAME_CONFIG.PIPE_SPEED) % width);
+      groundOffsetRef.current = (groundOffsetRef.current + GAME_CONFIG.PIPE_SPEED) % width;
 
       // Update bird
       const updatedBird = updateBird(gameState.bird, height);
 
-      // Check if bird hit the ground
-      if (updatedBird.position.y + updatedBird.height >= height - GAME_CONFIG.GROUND_HEIGHT) {
-        setGameState(prev => ({ ...prev, gameOver: true }));
+      // Check collisions
+      let collision = false;
+      
+      // Check ground and ceiling collisions
+      if (checkGroundCollision(updatedBird, height) || checkCeilingCollision(updatedBird)) {
+        collision = true;
+      }
+      
+      // Check pipe collisions
+      for (const pipe of gameState.pipes) {
+        if (checkCollision(updatedBird, pipe)) {
+          collision = true;
+          break;
+        }
+      }
+      
+      if (collision) {
+        gameStateRef.current = { ...gameState, gameOver: true };
+        forceUpdate({});
+        return; // Stop updating on collision
       }
 
       // Spawn new pipes
       if (timestamp - lastPipeTimeRef.current > GAME_CONFIG.PIPE_SPAWN_INTERVAL) {
-        setGameState(prev => ({
-          ...prev,
-          pipes: [...prev.pipes, createPipe(width, height)],
-        }));
+        gameState.pipes.push(createPipe(width, height));
         lastPipeTimeRef.current = timestamp;
       }
 
       // Update pipes
-      const updatedPipes = gameState.pipes
+      gameState.pipes = gameState.pipes
         .map(pipe => updatePipe(pipe))
         .filter(pipe => pipe.position.x + pipe.width > -50); // Remove off-screen pipes
 
       // Check for score
-      let newScore = gameState.score;
-      updatedPipes.forEach(pipe => {
+      gameState.pipes.forEach(pipe => {
         if (!pipe.passed && pipe.position.x + pipe.width < updatedBird.position.x) {
           pipe.passed = true;
-          newScore++;
+          gameState.score++;
+          forceUpdate({});
         }
       });
 
-      setGameState(prev => ({
-        ...prev,
-        bird: updatedBird,
-        pipes: updatedPipes,
-        score: newScore,
-      }));
+      // Update bird position
+      gameState.bird = updatedBird;
     }
 
     // Draw pipes
@@ -120,7 +139,7 @@ export default function GameCanvas({
     });
 
     // Draw ground (on top of pipes)
-    drawGround({ ctx, width, height, groundOffset });
+    drawGround({ ctx, width, height, groundOffset: groundOffsetRef.current });
 
     // Draw bird
     if (gameState.started) {
@@ -143,7 +162,7 @@ export default function GameCanvas({
     }
 
     requestRef.current = requestAnimationFrame(gameLoop);
-  }, [gameState, width, height, groundOffset]);
+  }, [width, height]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -152,7 +171,7 @@ export default function GameCanvas({
     canvas.width = width;
     canvas.height = height;
 
-    requestRef.current = requestAnimationFrame((timestamp) => gameLoop(timestamp));
+    requestRef.current = requestAnimationFrame(gameLoop);
 
     return () => {
       if (requestRef.current) {
@@ -160,6 +179,8 @@ export default function GameCanvas({
       }
     };
   }, [gameLoop, width, height]);
+
+  const gameState = gameStateRef.current;
 
   return (
     <div className="relative">
