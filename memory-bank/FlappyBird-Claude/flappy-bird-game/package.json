@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npm run build && npx gh-pages -d out"
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "next": "15.3.2",
@@ -24,6 +24,7 @@
     "eslint-config-next": "15.3.2",
     "gh-pages": "^6.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vercel": "^42.2.0"
   }
 }
