@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky background -->
+  <rect width="512" height="512" fill="#70c5ce"/>
+  
+  <!-- Bird body -->
+  <ellipse cx="256" cy="256" rx="120" ry="100" fill="#f7dc6f"/>
+  
+  <!-- Bird belly -->
+  <ellipse cx="256" cy="280" rx="90" ry="70" fill="#fef9e7"/>
+  
+  <!-- Eye white -->
+  <ellipse cx="300" cy="230" rx="35" ry="40" fill="#ffffff"/>
+  
+  <!-- Eye pupil -->
+  <ellipse cx="310" cy="235" rx="15" ry="20" fill="#000000"/>
+  
+  <!-- Beak upper -->
+  <path d="M 340 250 L 380 260 L 340 270 Z" fill="#ff6b35"/>
+  
+  <!-- Beak lower -->
+  <path d="M 340 270 L 370 275 L 340 280 Z" fill="#d84315"/>
+  
+  <!-- Wing -->
+  <ellipse cx="200" cy="256" rx="60" ry="80" fill="#f4d03f" transform="rotate(-20 200 256)"/>
+  
+  <!-- Wing detail -->
+  <ellipse cx="200" cy="256" rx="40" ry="60" fill="#f7dc6f" transform="rotate(-20 200 256)"/>
+</svg> 
