@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   
+  // GitHub Pages configuration
+  basePath: process.env.NODE_ENV === 'production' ? '/SummitTest2025' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/SummitTest2025' : '',
+  
   // Optimize images
   images: {
     unoptimized: true, // Since we're using canvas
